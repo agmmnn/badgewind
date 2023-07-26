@@ -7,12 +7,14 @@
 </picture>
 </a>
 
+Tailwind-styled markdown SVG badges, basically shields.io but customizable with Tailwind. _BadgeWind utilizes the [vercel/satori](https://github.com/vercel/satori) library under the hood._
+
 [![Github](https://badgewind.vercel.app/api/BadgeWind?icon=simple-icons:github)](https://github.com/agmmnn/badgewind) [![Tailwind](https://badgewind.vercel.app/api/-?icon=simple-icons:tailwindcss)](https://tailwindcss.com/) [![Triangle Company](https://badgewind.vercel.app/api/Triangle-Company?badgeStyle=rounded-none|border-2|p-0&leftStyle=rounded-none|bg-zinc-100|text-zinc-800|mr-0&rightStyle=rounded-none|bg-zinc-800|text-white&icon=mdi:triangle&textShadow=false)](https://vercel.com/home) [![Spotify](<https://badgewind.vercel.app/api/-Spotify?badgeStyle=bg-|border-0|rounded-full&leftStyle=rounded-l-full|mr-1&rightStyle=rounded-r-full|rounded-l|bg-(@1ed760)|text-slate-700&icon=simple-icons:spotify&iconStyle=text-(@1ed760)>)](https://open.spotify.com/user/agmmnn) [![Discord](<https://badgewind.vercel.app/api/-Midjourney?badgeStyle=border-0|rounded-full&leftStyle=rounded-full|mr-1|bg-(@525dea)&rightStyle=rounded-r-full|rounded-l|bg-|pl-0|pr-2&icon=simple-icons:discord&iconStyle=text-white>)](https://discord.com/invite/midjourney)
 ![](https://github.com/agmmnn/badgewind/assets/16024979/68e63feb-a872-4bac-bbc2-52f49faca96d)
 
 </div>
 
-Tailwind styled svg badges, basically shields.io but Tailwind styled. _BadgeWind utilizes the [vercel/satori](https://github.com/vercel/satori) library under the hood._
+
 
 > <a href="https://github.com/jaredh159/tailwind-react-native-classnames/blob/master/supported-utilities.md"><picture><source media="(prefers-color-scheme: dark)" srcset="https://badgewind.vercel.app/api/Supported-Tailwind_Utilities?badgeStyle=border-2|border-slate-600|text-white|rounded-none|bg-&leftStyle=bg-&rightStyle=bg-|border-l|border-slate-600&icon=devicon:tailwindcss&textShadow=false"><img alt="supported tailwind utilities" src="https://badgewind.vercel.app/api/Supported-Tailwind_Utilities?badgeStyle=border-2|border-slate-800|text-black|rounded-none|bg-&leftStyle=bg-&rightStyle=bg-|border-l|border-slate-800&icon=devicon:tailwindcss&textShadow=false"></picture></a>
 
