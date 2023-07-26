@@ -63,7 +63,7 @@ export default function Badge({ text, query }) {
 
   const textShadow = query.get("textShadow")
   const textStyle =
-    textShadow !== "false" ? { textShadow: "0px 1px 0px rgba(1,1,1, 0.3)" } : {}
+    textShadow === "true" ? { textShadow: "0px 1px 0px rgba(1,1,1, 0.3)" } : {}
 
   console.log(textShadow, textStyle)
 
