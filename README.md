@@ -25,19 +25,23 @@ Tailwind-styled markdown SVG badges, basically shields.io but customizable with 
 
 ## <picture><source media="(prefers-color-scheme: dark)" srcset="https://badgewind.vercel.app/api/Usage?badgeStyle=boder-slate-800|text-white|rounded-|bg-&leftStyle=bg-|text-2xl&rightStyle=bg-|border-l|border-slate-800&icon=memory:bow-arrow&textShadow=false&iconStyle=h-6|w-6"><img alt="supported tailwind utilities" src="https://badgewind.vercel.app/api/Usage?badgeStyle=boder-slate-800|text-black|rounded-|bg-&leftStyle=bg-|text-2xl&rightStyle=bg-|border-l|border-slate-800&icon=memory:bow-arrow&textShadow=false&iconStyle=h-6|w-6"></picture>
 
+### Simple Usage
+
+[![Github](https://badgewind.vercel.app/api/Github-agmmnn?icon=simple-icons:github)](https://github.com/agmmnn)
+
 ```
 https://badgewind.vercel.app/api/Github-agmmnn?icon=simple-icons:github
 ```
 
 ### Variables
 
-- \[left-right\]: Text for the left and right sides of the badge (Text).
-- **badgeStyle**: Main badge div (Tailwind style).
-- **leftStyle**: Style for the left div of the badge (Tailwind style).
-- **rightStyle**: Style for the right div of the badge (Tailwind style).
-- **icon**: Icon to show (Iconify icon code).
-- **iconStyle**: Style for the icon SVG (Tailwind style).
-- **textShadow**: Enable or disable text shadow (boolean, default true).
+- \[left-right\]: Text for the left and right sides of the badge (Text). _e.g: Triangle-Company_.
+- `badgeStyle`: Main badge div (Tailwind style).
+- `leftStyle`: Style for the left div of the badge (Tailwind style).
+- `rightStyle`: Style for the right div of the badge (Tailwind style).
+- `icon`: Icon to show (Iconify icon code).
+- `iconStyle`: Style for the icon SVG (Tailwind style).
+- `textShadow`: Enable or disable text shadow (boolean, default true).
 
 ### Special Symbols
 
@@ -58,8 +62,8 @@ Same as shields.io
 - `@`: `#`
 
 ```
+# these are identical:
 h-5|bg-(@fff)|text-(16px)
-
 h-5 bg-[#fff] text-[16px]
 ```
 
@@ -73,20 +77,28 @@ h-5 bg-[#fff] text-[16px]
 [![](<https://badgewind.vercel.app/api/Spotify-agmmnn?badgeStyle=bg-slate-700|p-1|border-0|rounded-full&leftStyle=rounded-l-full|mr-1&rightStyle=rounded-r-full|bg-(@1ed760)|text-slate-700&icon=simple-icons:spotify&iconStyle=text-(@1ed760)>)](<https://badgewind.vercel.app/api/Spotify-agmmnn?badgeStyle=bg-slate-700|p-1|border-0|rounded-full&leftStyle=rounded-l-full|mr-1&rightStyle=rounded-r-full|bg-white|text-slate-700&icon=simple-icons:spotify&iconStyle=text-(@1ed760)>)
 
 - Spotify-agmmnn
-- **badgeStyle**=bg-slate-700|p-1|border-0|rounded-full
-- **leftStyle**=rounded-l-full|mr-1
-- **rightStyle**=rounded-r-full|bg-(@1ed760)|text-slate-700
-- **icon**=simple-icons:spotify
-- **iconStyle**=text-(@1ed760)
+- `badgeStyle`=bg-slate-700|p-1|border-0|rounded-full
+- `leftStyle`=rounded-l-full|mr-1
+- `rightStyle`=rounded-r-full|bg-(@1ed760)|text-slate-700
+- `icon`=simple-icons:spotify
+- `iconStyle`=text-(@1ed760)
+
+```
+https://badgewind.vercel.app/api/Spotify-agmmnn?badgeStyle=bg-slate-700|p-1|border-0|rounded-full&leftStyle=rounded-l-full|mr-1&rightStyle=rounded-r-full|bg-(@1ed760)|text-slate-700&icon=simple-icons:spotify&iconStyle=text-(@1ed760)
+```
 
 ![](https://badgewind.vercel.app/api/Project-Version_v1.2.3?badgeStyle=p-0|rounded-full&leftStyle=rounded-l-full|mr-0&rightStyle=rounded-r-full|bg-purple-800|text-white&icon=feather:code&iconStyle=text-white|bg-purple-800|rounded-full)
 
 - Project-Version_v1.2.3
-- **badgeStyle**=p-0|rounded-full
-- **leftStyle**=rounded-l-full|mr-0
-- **rightStyle**=rounded-r-full|bg-purple-800|text-white
-- **icon**=feather:code
-- **iconStyle**=text-white|bg-purple-800|rounded-full
+- `badgeStyle`=p-0|rounded-full
+- `leftStyle`=rounded-l-full|mr-0
+- `rightStyle`=rounded-r-full|bg-purple-800|text-white
+- `icon`=feather:code
+- `iconStyle`=text-white|bg-purple-800|rounded-full
+
+```
+https://badgewind.vercel.app/api/Project-Version_v1.2.3?badgeStyle=p-0|rounded-full&leftStyle=rounded-l-full|mr-0&rightStyle=rounded-r-full|bg-purple-800|text-white&icon=feather:code&iconStyle=text-white|bg-purple-800|rounded-full
+```
 
 <details>
 <summary>Badge component</summary>
