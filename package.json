@@ -1,0 +1,24 @@
+{
+  "name": "badgewind-hono",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "dev:web": "cd web && bun run dev",
+    "dev:all": "concurrently \"bun run dev\" \"bun run dev:web\"",
+    "build:web": "cd web && bun run build",
+    "build": "bun run build:web",
+    "deploy": "bun run build && wrangler deploy --minify",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+  },
+  "dependencies": {
+    "hono": "^4.11.4",
+    "satori": "^0.19.1",
+    "tailwind-merge": "^3.4.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.8",
+    "concurrently": "^9.2.1",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.4.0"
+  }
+}
