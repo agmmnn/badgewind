@@ -11,7 +11,7 @@ interface CanvasProps {
 }
 
 export function Canvas({ badgeUrl, isDark, onSectionClick }: CanvasProps) {
-  const [zoom, setZoom] = useState(3);
+  const [zoom, setZoom] = useState(2);
   const [svgContent, setSvgContent] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 

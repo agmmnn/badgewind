@@ -69,11 +69,16 @@ async function getFontData(
   }
 
   // Fontsource font via jsDelivr
-  const fontConfig = FONTSOURCE_FONTS[fontKey];
-  if (!fontConfig) {
-    // Unknown font, fallback to Verdana
-    return getFontData("verdana");
-  }
+  // Fontsource font via jsDelivr
+  // If explicitly in our map, use that config (for better display names)
+  // Otherwise assume the key is the package name (e.g. "gravitas-one")
+  const fontConfig = FONTSOURCE_FONTS[fontKey] || {
+    package: fontKey,
+    displayName: fontKey
+      .split("-")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" "),
+  };
 
   if (fontDataCache.has(fontKey)) {
     return {
@@ -84,10 +89,17 @@ async function getFontData(
 
   try {
     // Fetch WOFF file directly from Fontsource via jsDelivr npm
-    const fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/${fontConfig.package}/files/${fontConfig.package}-latin-400-normal.woff`;
-    const fontResponse = await fetch(fontUrl);
+    // Try standard latin-400-normal first
+    let fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/${fontConfig.package}/files/${fontConfig.package}-latin-400-normal.woff`;
+    let fontResponse = await fetch(fontUrl);
 
+    // Some fonts might not have "latin" subset or might have different naming convention
+    // If 404, we could try without "latin-" prefix or just fail gracefully
     if (!fontResponse.ok) {
+      // Try without "latin-" for some fonts that might just be "400-normal" or similar?
+      // Actually Fontsource standardization is usually pretty good.
+      // Let's try fetching the generic one if specific latin fails,
+      // but for now let's stick to the standard pattern and just log error.
       console.error(`Failed to fetch font ${fontKey}: ${fontResponse.status}`);
       return getFontData("verdana");
     }
@@ -105,11 +117,11 @@ async function getFontData(
 function getFontImport(fontKey?: string): string {
   if (!fontKey || fontKey === "verdana") return "";
 
-  const fontConfig = FONTSOURCE_FONTS[fontKey];
-  if (!fontConfig) return "";
+  const fontConfig = FONTSOURCE_FONTS[fontKey] || { package: fontKey };
 
   // Use Fontsource CSS via jsDelivr for @import in SVG
-  return `@import url('https://cdn.jsdelivr.net/fontsource/fonts/${fontConfig.package}@latest/latin.css');`;
+  // Correct endpoint: https://cdn.jsdelivr.net/fontsource/css/{font}@latest/index.css
+  return `@import url('https://cdn.jsdelivr.net/fontsource/css/${fontConfig.package}@latest/index.css');`;
 }
 
 // Cache for icon data
@@ -163,7 +175,30 @@ app.get("/:text", async (c, next) => {
 // Main badge route
 app.get("/:text", async (c) => {
   const text = c.req.param("text");
-  const query = new URL(c.req.url).searchParams;
+  const url = new URL(c.req.url);
+  let query = url.searchParams;
+
+  // Check for base64-encoded style parameter (?s=... or ?style=...)
+  const base64Style = query.get("s") || query.get("style");
+  if (base64Style) {
+    try {
+      // Decode URL-safe base64 to JSON
+      const decoded = atob(base64Style.replace(/-/g, "+").replace(/_/g, "/"));
+      const styleObj = JSON.parse(decoded) as Record<string, string>;
+
+      // Create new URLSearchParams with decoded values
+      const newParams = new URLSearchParams();
+      for (const [key, value] of Object.entries(styleObj)) {
+        if (typeof value === "string") {
+          newParams.set(key, value);
+        }
+      }
+      query = newParams;
+    } catch (e) {
+      console.error("Failed to decode base64 style:", e);
+      // Fall back to regular query params
+    }
+  }
 
   // Get icon data if specified
   const iconParam = query.get("icon");
@@ -181,18 +216,24 @@ app.get("/:text", async (c) => {
   const { data: fontData, name: fontName } = await getFontData(fontKey);
   const fontImport = getFontImport(fontKey);
 
+  // Get advanced options
+  const embedFont = query.get("embedFont") !== "false";
+  const importFont = query.get("importFont") === "true";
+  const debug = query.get("debug") === "true";
+
   // @ts-ignore - satori 0.12.1 doesn't require height/width but types still expect it
   let svg = await satori(
     <Badge text={text} query={query} iconData={iconData} />,
     // @ts-ignore
     {
-      embedFont: false,
       fonts: [
         {
           name: fontName,
           data: fontData,
         },
       ],
+      embedFont,
+      debug,
     },
   );
 
@@ -202,8 +243,8 @@ app.get("/:text", async (c) => {
     `font-family="${fontName}, sans-serif" text-rendering="geometricPrecision"`,
   );
 
-  // Inject Google Fonts @import into SVG if using a web font
-  if (fontImport) {
+  // Inject Google Fonts @import into SVG if using a web font and importFont is enabled
+  if (fontImport && importFont) {
     svg = svg.replace("<svg ", `<svg `);
     // Inject defs with style for font import
     const defsStyle = `<defs><style type="text/css">${fontImport}</style></defs>`;

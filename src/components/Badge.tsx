@@ -127,14 +127,25 @@ const IconElement: FC<IconElementProps> = ({ svg, iconStyle }) => {
   );
 };
 
+// Maximum number of Tailwind classes allowed (security limit)
+const MAX_CLASSES = 20;
+
+/**
+ * Process style string from URL query param to Tailwind classes
+ * Uses standard Tailwind syntax with comma separator:
+ * Example: "bg-slate-700,p-1,rounded-full,text-[#1ed760]"
+ */
 const processStyle = (styleText: string | null): string | undefined => {
-  if (styleText) {
-    const processedText = styleText
-      .replace("(", "[")
-      .replace(")", "]")
-      .replace("@", "#");
-    return processedText.split("|").join(" ");
-  }
+  if (!styleText) return undefined;
+
+  // Split by comma, trim whitespace, filter empty, limit to MAX_CLASSES
+  const classes = styleText
+    .split(",")
+    .map((c) => c.trim())
+    .filter((c) => c.length > 0)
+    .slice(0, MAX_CLASSES);
+
+  return classes.join(" ");
 };
 
 function processText(text: string): [string, string | undefined] {

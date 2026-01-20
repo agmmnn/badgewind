@@ -1,10 +1,23 @@
 import { useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import {
+  TailwindInput,
+  TailwindTextarea,
+} from "@/components/ui/tailwind-input";
 import { Section } from "@/components/Section";
 import type { ActiveSection } from "@/components/Canvas";
 import { AVAILABLE_FONTS } from "@/App";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Settings, ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface ControlsSidebarProps {
   leftText: string;
@@ -16,6 +29,9 @@ interface ControlsSidebarProps {
   iconStyle: string;
   textShadow: boolean;
   font: string;
+  embedFont: boolean;
+  importFont: boolean;
+  debug: boolean;
   activeSection: ActiveSection;
   onLeftTextChange: (value: string) => void;
   onRightTextChange: (value: string) => void;
@@ -26,6 +42,9 @@ interface ControlsSidebarProps {
   onIconStyleChange: (value: string) => void;
   onTextShadowChange: (value: boolean) => void;
   onFontChange: (value: string) => void;
+  onEmbedFontChange: (value: boolean) => void;
+  onImportFontChange: (value: boolean) => void;
+  onDebugChange: (value: boolean) => void;
 }
 
 export function ControlsSidebar({
@@ -36,8 +55,11 @@ export function ControlsSidebar({
   rightStyle,
   icon,
   iconStyle,
-  textShadow,
+  // textShadow,
   font,
+  embedFont,
+  importFont,
+  debug,
   activeSection,
   onLeftTextChange,
   onRightTextChange,
@@ -46,14 +68,15 @@ export function ControlsSidebar({
   onRightStyleChange,
   onIconChange,
   onIconStyleChange,
-  onTextShadowChange,
+  // onTextShadowChange,
   onFontChange,
+  onEmbedFontChange,
+  onImportFontChange,
+  onDebugChange,
 }: ControlsSidebarProps) {
   const iconSectionRef = useRef<HTMLDivElement>(null);
   const leftTextRef = useRef<HTMLInputElement>(null);
   const rightTextRef = useRef<HTMLInputElement>(null);
-  const leftStyleRef = useRef<HTMLTextAreaElement>(null);
-  const rightStyleRef = useRef<HTMLTextAreaElement>(null);
 
   // Scroll to and focus the active section
   useEffect(() => {
@@ -118,7 +141,7 @@ export function ControlsSidebar({
             className={`h-8 text-sm transition-all ${getSectionHighlight("right")}`}
           />
         </div>
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <input
             type="checkbox"
             id="textShadow"
@@ -132,7 +155,7 @@ export function ControlsSidebar({
           >
             Text shadow
           </Label>
-        </div>
+        </div> */}
         <p className="text-[10px] text-muted-foreground">
           _ = space, __ = underscore, -- = dash
         </p>
@@ -144,21 +167,46 @@ export function ControlsSidebar({
           <Label htmlFor="font" className="text-xs">
             Font Family
           </Label>
-          <select
-            id="font"
-            value={font}
-            onChange={(e) => onFontChange(e.target.value)}
-            className="w-full h-8 text-sm rounded-md border border-input bg-background px-2 py-1 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-          >
-            {AVAILABLE_FONTS.map((f) => (
-              <option key={f.key} value={f.key}>
-                {f.name}
-              </option>
-            ))}
-          </select>
+          <div className="flex gap-1">
+            <Input
+              id="font"
+              value={font}
+              onChange={(e) => onFontChange(e.target.value)}
+              onFocus={(e) => e.target.select()}
+              placeholder="verdana (or any Google Font)"
+              className="h-8 text-sm"
+            />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 w-8 p-0 shrink-0"
+                >
+                  <ChevronDown className="h-4 w-4" opacity={0.5} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="w-[200px] h-[300px] overflow-y-auto"
+              >
+                <DropdownMenuLabel>Popular Fonts</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {AVAILABLE_FONTS.map((f) => (
+                  <DropdownMenuItem
+                    key={f.key}
+                    onClick={() => onFontChange(f.key)}
+                    className="cursor-pointer font-normal"
+                  >
+                    {f.name}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
         <p className="text-[10px] text-muted-foreground">
-          Note: Web fonts work in browsers but may not render in GitHub READMEs
+          Select a preset or enter any Google Font ID (e.g., 'crimson-text').
         </p>
       </Section>
 
@@ -180,12 +228,12 @@ export function ControlsSidebar({
           <Label htmlFor="iconStyle" className="text-xs">
             Icon Style
           </Label>
-          <Input
+          <TailwindInput
             id="iconStyle"
             value={iconStyle}
-            onChange={(e) => onIconStyleChange(e.target.value)}
-            placeholder="text-white|h-5|w-5"
-            className={`h-8 text-sm font-mono transition-all ${getSectionHighlight("icon")}`}
+            onChange={onIconStyleChange}
+            placeholder="text-white,h-5,w-5"
+            className={`h-8 text-sm transition-all ${getSectionHighlight("icon")}`}
           />
         </div>
       </Section>
@@ -196,43 +244,136 @@ export function ControlsSidebar({
           <Label htmlFor="badgeStyle" className="text-xs">
             Badge
           </Label>
-          <Textarea
+          <TailwindTextarea
             id="badgeStyle"
             value={badgeStyle}
-            onChange={(e) => onBadgeStyleChange(e.target.value)}
-            placeholder="rounded-full|border-2"
-            className="min-h-[60px] text-xs font-mono resize-none"
+            onChange={onBadgeStyleChange}
+            placeholder="rounded-full,border-2"
+            className=""
           />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="leftStyle" className="text-xs">
             Left
           </Label>
-          <Textarea
-            ref={leftStyleRef}
+          <TailwindTextarea
             id="leftStyle"
             value={leftStyle}
-            onChange={(e) => onLeftStyleChange(e.target.value)}
+            onChange={onLeftStyleChange}
             placeholder="bg-slate-700"
-            className={`min-h-[60px] text-xs font-mono resize-none transition-all ${getSectionHighlight("left")}`}
+            className={`transition-all ${getSectionHighlight("left")}`}
           />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="rightStyle" className="text-xs">
             Right
           </Label>
-          <Textarea
-            ref={rightStyleRef}
+          <TailwindTextarea
             id="rightStyle"
             value={rightStyle}
-            onChange={(e) => onRightStyleChange(e.target.value)}
+            onChange={onRightStyleChange}
             placeholder="bg-green-500"
-            className={`min-h-[60px] text-xs font-mono resize-none transition-all ${getSectionHighlight("right")}`}
+            className={`transition-all ${getSectionHighlight("right")}`}
           />
         </div>
-        <p className="text-[10px] text-muted-foreground">
-          | = space, () = [], @ = #
-        </p>
+      </Section>
+
+      {/* Advanced Options Section */}
+      <Section title="Advanced">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="w-full h-8 text-xs bg-muted hover:bg-muted/80 rounded flex items-center justify-center gap-2 transition-colors">
+              <Settings className="h-3.5 w-3.5" />
+              Options
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel>Advanced Options</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => onEmbedFontChange(!embedFont)}>
+              <div className="flex items-center gap-2 w-full">
+                <div
+                  className={`h-3.5 w-3.5 rounded border ${
+                    embedFont ? "bg-primary border-primary" : "border-border"
+                  }`}
+                >
+                  {embedFont && (
+                    <svg
+                      className="w-full h-full text-primary-foreground p-0.5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  )}
+                </div>
+                <span>Rasterize Font</span>
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onImportFontChange(!importFont)}>
+              <div className="flex items-center gap-2 w-full">
+                <div
+                  className={`h-3.5 w-3.5 rounded border ${
+                    importFont ? "bg-primary border-primary" : "border-border"
+                  }`}
+                >
+                  {importFont && (
+                    <svg
+                      className="w-full h-full text-primary-foreground p-0.5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  )}
+                </div>
+                <span>Import Font CSS</span>
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onDebugChange(!debug)}>
+              <div className="flex items-center gap-2 w-full">
+                <div
+                  className={`h-3.5 w-3.5 rounded border ${
+                    debug ? "bg-primary border-primary" : "border-border"
+                  }`}
+                >
+                  {debug && (
+                    <svg
+                      className="w-full h-full text-primary-foreground p-0.5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  )}
+                </div>
+                <span>Debug Mode</span>
+              </div>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <div className="mt-2 space-y-1.5">
+          <div className="text-[10px] text-muted-foreground">
+            <div className="flex justify-between">
+              <span>Rasterize Font:</span>
+              <span className="font-medium">{embedFont ? "On" : "Off"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Import Font CSS:</span>
+              <span className="font-medium">{importFont ? "On" : "Off"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Debug:</span>
+              <span className="font-medium">{debug ? "On" : "Off"}</span>
+            </div>
+          </div>
+        </div>
       </Section>
     </aside>
   );
