@@ -1,10 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  TailwindInput,
-  TailwindTextarea,
-} from "@/components/ui/tailwind-input";
 import { Section } from "@/components/Section";
 import type { ActiveSection } from "@/components/Canvas";
 import { AVAILABLE_FONTS } from "@/App";
@@ -16,8 +12,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Settings, ChevronDown } from "lucide-react";
+import { ChevronDown, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "./ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ControlsSidebarProps {
   leftText: string;
@@ -45,6 +48,8 @@ interface ControlsSidebarProps {
   onEmbedFontChange: (value: boolean) => void;
   onImportFontChange: (value: boolean) => void;
   onDebugChange: (value: boolean) => void;
+  altChars: boolean;
+  onAltCharsChange: (value: boolean) => void;
 }
 
 export function ControlsSidebar({
@@ -73,6 +78,8 @@ export function ControlsSidebar({
   onEmbedFontChange,
   onImportFontChange,
   onDebugChange,
+  altChars,
+  onAltCharsChange,
 }: ControlsSidebarProps) {
   const iconSectionRef = useRef<HTMLDivElement>(null);
   const leftTextRef = useRef<HTMLInputElement>(null);
@@ -112,7 +119,7 @@ export function ControlsSidebar({
   };
 
   return (
-    <aside className="w-72 border-r border-border flex flex-col shrink-0 overflow-y-auto">
+    <aside className="w-72 bg-card border border-border rounded-xl shadow-sm flex flex-col shrink-0 overflow-y-auto scrollbar-hide">
       {/* Text Section */}
       <Section title="Text">
         <div className="space-y-1.5">
@@ -156,8 +163,12 @@ export function ControlsSidebar({
             Text shadow
           </Label>
         </div> */}
-        <p className="text-[10px] text-muted-foreground">
-          _ = space, __ = underscore, -- = dash
+        <p className="text-[10px] text-muted-foreground leading-relaxed">
+          Use <code className="bg-muted px-1 rounded">_</code> for space,{" "}
+          <code className="bg-muted px-1 rounded">__</code> for{" "}
+          <code className="bg-muted px-1 rounded">_</code>, and{" "}
+          <code className="bg-muted px-1 rounded">--</code> for{" "}
+          <code className="bg-muted px-1 rounded">-</code>.
         </p>
       </Section>
 
@@ -228,12 +239,12 @@ export function ControlsSidebar({
           <Label htmlFor="iconStyle" className="text-xs">
             Icon Style
           </Label>
-          <TailwindInput
+          <Input
             id="iconStyle"
             value={iconStyle}
-            onChange={onIconStyleChange}
+            onChange={(e) => onIconStyleChange(e.target.value)}
             placeholder="text-white,h-5,w-5"
-            className={`h-8 text-sm transition-all ${getSectionHighlight("icon")}`}
+            className="transition-all font-mono"
           />
         </div>
       </Section>
@@ -244,133 +255,152 @@ export function ControlsSidebar({
           <Label htmlFor="badgeStyle" className="text-xs">
             Badge
           </Label>
-          <TailwindTextarea
+          <Textarea
             id="badgeStyle"
             value={badgeStyle}
-            onChange={onBadgeStyleChange}
+            onChange={(e) => onBadgeStyleChange(e.target.value)}
             placeholder="rounded-full,border-2"
-            className=""
+            className="transition-all font-mono"
           />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="leftStyle" className="text-xs">
             Left
           </Label>
-          <TailwindTextarea
+          <Textarea
             id="leftStyle"
             value={leftStyle}
-            onChange={onLeftStyleChange}
+            onChange={(e) => onLeftStyleChange(e.target.value)}
             placeholder="bg-slate-700"
-            className={`transition-all ${getSectionHighlight("left")}`}
+            className="transition-all font-mono"
           />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="rightStyle" className="text-xs">
             Right
           </Label>
-          <TailwindTextarea
+          <Textarea
             id="rightStyle"
             value={rightStyle}
-            onChange={onRightStyleChange}
+            onChange={(e) => onRightStyleChange(e.target.value)}
             placeholder="bg-green-500"
-            className={`transition-all ${getSectionHighlight("right")}`}
+            className="transition-all font-mono"
           />
         </div>
       </Section>
 
       {/* Advanced Options Section */}
       <Section title="Advanced">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="w-full h-8 text-xs bg-muted hover:bg-muted/80 rounded flex items-center justify-center gap-2 transition-colors">
-              <Settings className="h-3.5 w-3.5" />
-              Options
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>Advanced Options</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => onEmbedFontChange(!embedFont)}>
-              <div className="flex items-center gap-2 w-full">
-                <div
-                  className={`h-3.5 w-3.5 rounded border ${
-                    embedFont ? "bg-primary border-primary" : "border-border"
-                  }`}
-                >
-                  {embedFont && (
-                    <svg
-                      className="w-full h-full text-primary-foreground p-0.5"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                    >
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                  )}
-                </div>
-                <span>Rasterize Font</span>
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onImportFontChange(!importFont)}>
-              <div className="flex items-center gap-2 w-full">
-                <div
-                  className={`h-3.5 w-3.5 rounded border ${
-                    importFont ? "bg-primary border-primary" : "border-border"
-                  }`}
-                >
-                  {importFont && (
-                    <svg
-                      className="w-full h-full text-primary-foreground p-0.5"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                    >
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                  )}
-                </div>
-                <span>Import Font CSS</span>
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onDebugChange(!debug)}>
-              <div className="flex items-center gap-2 w-full">
-                <div
-                  className={`h-3.5 w-3.5 rounded border ${
-                    debug ? "bg-primary border-primary" : "border-border"
-                  }`}
-                >
-                  {debug && (
-                    <svg
-                      className="w-full h-full text-primary-foreground p-0.5"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                    >
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                  )}
-                </div>
-                <span>Debug Mode</span>
-              </div>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <div className="mt-2 space-y-1.5">
-          <div className="text-[10px] text-muted-foreground">
-            <div className="flex justify-between">
-              <span>Rasterize Font:</span>
-              <span className="font-medium">{embedFont ? "On" : "Off"}</span>
+        <div className="space-y-3">
+          {/* Alternative Characters */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <Label htmlFor="altChars" className="text-xs cursor-pointer">
+                Alternative Characters
+              </Label>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent side="right" className="max-w-[220px]">
+                  Use () for [] and @ for # in URLs. Example: bg-(@1ed760)
+                  instead of bg-[#1ed760]
+                </TooltipContent>
+              </Tooltip>
             </div>
-            <div className="flex justify-between">
-              <span>Import Font CSS:</span>
-              <span className="font-medium">{importFont ? "On" : "Off"}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-muted-foreground w-6">
+                {altChars ? "On" : "Off"}
+              </span>
+              <Switch
+                id="altChars"
+                checked={altChars}
+                onCheckedChange={onAltCharsChange}
+              />
             </div>
-            <div className="flex justify-between">
-              <span>Debug:</span>
-              <span className="font-medium">{debug ? "On" : "Off"}</span>
+          </div>
+
+          {/* Rasterize Font */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <Label htmlFor="embedFont" className="text-xs cursor-pointer">
+                Rasterize Font
+              </Label>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent side="right" className="max-w-[220px]">
+                  Embed font glyphs directly into SVG for consistent rendering
+                  across all platforms.
+                </TooltipContent>
+              </Tooltip>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-muted-foreground w-6">
+                {embedFont ? "On" : "Off"}
+              </span>
+              <Switch
+                id="embedFont"
+                checked={embedFont}
+                onCheckedChange={onEmbedFontChange}
+              />
+            </div>
+          </div>
+
+          {/* Import Font CSS */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <Label htmlFor="importFont" className="text-xs cursor-pointer">
+                Import Font CSS
+              </Label>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent side="right" className="max-w-[220px]">
+                  Add @import CSS rule to load the font from a CDN. Useful when
+                  rasterization is disabled.
+                </TooltipContent>
+              </Tooltip>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-muted-foreground w-6">
+                {importFont ? "On" : "Off"}
+              </span>
+              <Switch
+                id="importFont"
+                checked={importFont}
+                onCheckedChange={onImportFontChange}
+              />
+            </div>
+          </div>
+
+          {/* Debug Mode */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <Label htmlFor="debug" className="text-xs cursor-pointer">
+                Debug Mode
+              </Label>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent side="right" className="max-w-[220px]">
+                  Show bounding boxes and layout debugging information in the
+                  SVG output.
+                </TooltipContent>
+              </Tooltip>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-muted-foreground w-6">
+                {debug ? "On" : "Off"}
+              </span>
+              <Switch
+                id="debug"
+                checked={debug}
+                onCheckedChange={onDebugChange}
+              />
             </div>
           </div>
         </div>

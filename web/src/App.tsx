@@ -39,6 +39,7 @@ function App() {
   const [embedFont, setEmbedFont] = useState(true);
   const [importFont, setImportFont] = useState(false);
   const [debug, setDebug] = useState(false);
+  const [altChars, setAltChars] = useState(false);
   const [isDark, setIsDark] = useState(true);
   const [activeSection, setActiveSection] = useState<ActiveSection>(null);
 
@@ -93,11 +94,21 @@ function App() {
     debug,
   ]);
 
+  // Helper function to convert Tailwind syntax to URL-safe alternative characters
+  // Converts [...] to (...) and # to @ inside brackets
+  const convertToAltChars = (input: string): string => {
+    return input.replace(/\[([^\]]*)\]/g, (_, content) => {
+      // Convert # to @ inside the brackets
+      const converted = content.replace(/#/g, "@");
+      return `(${converted})`;
+    });
+  };
+
   // Readable URL for display (not encoded, shows actual Tailwind classes)
   const displayUrl = useMemo(() => {
     const baseUrl = window.location.origin;
     const text = rightText ? `${leftText}-${rightText}` : leftText;
-    const params: string[] = [];
+    let params: string[] = [];
 
     if (badgeStyle) params.push(`badgeStyle=${badgeStyle}`);
     if (leftStyle) params.push(`leftStyle=${leftStyle}`);
@@ -109,6 +120,11 @@ function App() {
     if (!embedFont) params.push(`embedFont=false`);
     if (importFont) params.push(`importFont=true`);
     if (debug) params.push(`debug=true`);
+
+    // Convert to alternative characters if enabled
+    if (altChars) {
+      params = params.map(convertToAltChars);
+    }
 
     const queryString = params.join("&");
     return `${baseUrl}/${text}${queryString ? `?${queryString}` : ""}`;
@@ -125,15 +141,20 @@ function App() {
     embedFont,
     importFont,
     debug,
+    altChars,
   ]);
 
-  // Full URL for copying (encoded for actual use)
+  // Full URL for copying (encoded for actual use, or alt-chars version)
   const fullUrl = useMemo(() => {
+    // When using alternative characters, displayUrl is already URL-safe
+    if (altChars) {
+      return displayUrl;
+    }
     const baseUrl = window.location.origin;
     // Remove /api prefix if present (from dev mode)
     const path = badgeUrl.startsWith("/api/") ? badgeUrl.slice(4) : badgeUrl;
     return `${baseUrl}${path}`;
-  }, [badgeUrl]);
+  }, [badgeUrl, altChars, displayUrl]);
 
   // Base64 URL (compact, URL-safe encoding of all style params)
   const base64Url = useMemo(() => {
@@ -202,10 +223,10 @@ function App() {
   }, []);
 
   return (
-    <div className="h-screen w-screen flex flex-col overflow-hidden bg-background">
+    <div className="h-screen w-screen flex flex-col overflow-hidden bg-muted/50 p-3 gap-3">
       <Header isDark={isDark} onToggleTheme={() => setIsDark(!isDark)} />
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden gap-3">
         <ControlsSidebar
           leftText={leftText}
           rightText={rightText}
@@ -219,6 +240,7 @@ function App() {
           embedFont={embedFont}
           importFont={importFont}
           debug={debug}
+          altChars={altChars}
           activeSection={activeSection}
           onLeftTextChange={setLeftText}
           onRightTextChange={setRightText}
@@ -232,9 +254,10 @@ function App() {
           onEmbedFontChange={setEmbedFont}
           onImportFontChange={setImportFont}
           onDebugChange={setDebug}
+          onAltCharsChange={setAltChars}
         />
 
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden gap-3">
           <Canvas
             badgeUrl={badgeUrl}
             isDark={isDark}

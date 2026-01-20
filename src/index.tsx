@@ -284,7 +284,6 @@ app.get("/:text", async (c) => {
   });
 });
 
-// Home route - simple info page (will be replaced with badge studio later)
 app.get("/", (c) => {
   return c.html(``);
 });

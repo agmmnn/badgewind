@@ -131,15 +131,41 @@ const IconElement: FC<IconElementProps> = ({ svg, iconStyle }) => {
 const MAX_CLASSES = 20;
 
 /**
+ * Convert URL-safe syntax to standard Tailwind syntax
+ * Supports alternative syntax for characters that break URLs:
+ * - (...) → [...] (parentheses to square brackets)
+ * - @ → # (at symbol to hash, only inside parentheses/brackets)
+ *
+ * Examples:
+ * - "bg-(@1ed760)" → "bg-[#1ed760]"
+ * - "text-(22px)" → "text-[22px]"
+ */
+const convertUrlSafeSyntax = (input: string): string => {
+  // Replace (@...) pattern: @ becomes # inside parentheses
+  // Then convert parentheses to square brackets
+  return input.replace(/\(([^)]*)\)/g, (_, content) => {
+    // Convert @ to # inside the brackets
+    const converted = content.replace(/@/g, "#");
+    return `[${converted}]`;
+  });
+};
+
+/**
  * Process style string from URL query param to Tailwind classes
  * Uses standard Tailwind syntax with comma separator:
  * Example: "bg-slate-700,p-1,rounded-full,text-[#1ed760]"
+ *
+ * Also supports URL-safe alternative syntax:
+ * Example: "bg-slate-700,p-1,rounded-full,text-(@1ed760)"
  */
 const processStyle = (styleText: string | null): string | undefined => {
   if (!styleText) return undefined;
 
+  // Convert URL-safe syntax to standard Tailwind syntax
+  const converted = convertUrlSafeSyntax(styleText);
+
   // Split by comma, trim whitespace, filter empty, limit to MAX_CLASSES
-  const classes = styleText
+  const classes = converted
     .split(",")
     .map((c) => c.trim())
     .filter((c) => c.length > 0)

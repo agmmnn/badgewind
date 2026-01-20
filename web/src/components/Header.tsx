@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Wind, Sun, Moon, ExternalLink } from "lucide-react";
+import { Sun, Moon, ExternalLink } from "lucide-react";
 
 interface HeaderProps {
   isDark: boolean;
@@ -9,26 +9,17 @@ interface HeaderProps {
 
 export function Header({ isDark, onToggleTheme }: HeaderProps) {
   return (
-    <header className="h-12 border-b border-border flex items-center justify-between px-4 shrink-0">
+    <header className="h-12 bg-card border border-border rounded-xl shadow-sm flex items-center justify-between px-4 shrink-0">
       <a href="https://badgewind.agmmnn.workers.dev/">
         <div className="flex items-center gap-2">
-          <Wind className="h-5 w-5 text-primary" />
-          <span className="font-semibold">
-            Badge<span className="text-primary">wind</span> Studio
+          <img src="./logo.svg" alt="BadgeWind Logo" className="h-7 w-7" />
+          <span className="font-semibold text-xl">
+            Badge<span className="text-primary">Wind</span>
           </span>
         </div>
       </a>
 
       <div className="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8"
-          onClick={onToggleTheme}
-        >
-          {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-        </Button>
-        <Separator orientation="vertical" className="h-6" />
         <a
           href="https://github.com/agmmnn/badgewind"
           target="_blank"
@@ -70,6 +61,15 @@ export function Header({ isDark, onToggleTheme }: HeaderProps) {
             Tailwind <ExternalLink className="h-3 w-3" />
           </Button>
         </a>
+
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8"
+          onClick={onToggleTheme}
+        >
+          {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+        </Button>
       </div>
     </header>
   );

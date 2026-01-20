@@ -56,7 +56,7 @@ export function OutputPanel({
   debug,
 }: OutputPanelProps) {
   const [copied, setCopied] = useState(false);
-  const [urlEncoded, setUrlEncoded] = useState(false);
+  const [urlEncoded, setUrlEncoded] = useState(true);
 
   // Compute markdown and HTML with both URL formats
   const alt = rightText ? `${leftText} ${rightText}` : leftText;
@@ -88,7 +88,17 @@ export function OutputPanel({
     if (!embedFont) config.embedFont = false;
     if (debug) config.debug = true;
     return JSON.stringify(config, null, 2);
-  }, [badgeStyle, leftStyle, rightStyle, icon, iconStyle, textShadow, font, embedFont, debug]);
+  }, [
+    badgeStyle,
+    leftStyle,
+    rightStyle,
+    icon,
+    iconStyle,
+    textShadow,
+    font,
+    embedFont,
+    debug,
+  ]);
 
   const copyToClipboard = useCallback(async (text: string) => {
     await navigator.clipboard.writeText(text);
@@ -104,7 +114,7 @@ export function OutputPanel({
   }, [copied]);
 
   return (
-    <div className="min-h-16 border-t border-border shrink-0 bg-card px-4 py-3">
+    <div className="min-h-16 bg-card border border-border rounded-xl shadow-sm shrink-0 px-4 py-3">
       <div className="h-full flex items-center gap-4">
         {/* URL Display - always shows decoded/readable URL with syntax highlighting */}
         <div className="flex-1 min-w-0">

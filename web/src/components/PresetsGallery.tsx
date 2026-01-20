@@ -1,4 +1,6 @@
 import { useCallback, useState } from "react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 // Full badge presets with live preview - extracted from README examples
 export interface BadgePreset {
@@ -161,7 +163,8 @@ export const badgePresets: BadgePreset[] = [
     rightText: "Wind",
     badgeStyle: "bg-,border,text-[27px],border-cyan-500,rounded-full,text-2xl",
     leftStyle: "bg-,text-rose-50,p-2,rounded-l-xl,h-full,text-2xl",
-    rightStyle: "bg-,rounded-r-xl,italic,h-full,text-2xl,px-3,border-l,border-cyan-500",
+    rightStyle:
+      "bg-,rounded-r-xl,italic,h-full,text-2xl,px-3,border-l,border-cyan-500",
     icon: "ri:windy-line",
     iconStyle: "text-cyan-500,h-11,w-11",
     textShadow: true,
@@ -479,48 +482,42 @@ export function PresetsGallery({
   }, []);
 
   return (
-    <aside className="w-64 border-l border-border flex flex-col shrink-0 overflow-hidden">
+    <aside className="w-64 bg-card border border-border rounded-xl shadow-sm flex flex-col shrink-0 overflow-hidden">
       {/* Save Design Section */}
       <div className="px-3 py-2.5 border-b border-border">
         {isNaming ? (
           <div className="flex gap-1">
-            <input
+            <Input
               type="text"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               placeholder="Design name"
-              className="flex-1 h-7 px-2 text-xs rounded border border-input bg-background"
+              className="h-full"
               autoFocus
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleConfirmSave();
                 if (e.key === "Escape") handleCancelSave();
               }}
             />
-            <button
-              onClick={handleConfirmSave}
-              className="h-7 px-2 text-xs bg-primary text-primary-foreground rounded hover:bg-primary/90"
-            >
+            <Button onClick={handleConfirmSave} variant="default" size="sm">
               Save
-            </button>
-            <button
-              onClick={handleCancelSave}
-              className="h-7 px-2 text-xs border border-border rounded hover:bg-muted"
-            >
+            </Button>
+            <Button onClick={handleCancelSave} variant="secondary" size="sm">
               ✕
-            </button>
+            </Button>
           </div>
         ) : (
-          <button
+          <Button
             onClick={handleSaveDesign}
             disabled={!currentDesign}
-            className="w-full h-8 text-xs font-medium bg-primary text-primary-foreground rounded hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
+            className="w-full h-8 text-xs"
           >
             Save Current Design
-          </button>
+          </Button>
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto scrollbar-hide">
         {/* Saved Designs */}
         {savedDesigns.length > 0 && (
           <div className="p-3 border-b border-border">

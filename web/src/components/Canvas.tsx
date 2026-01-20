@@ -78,48 +78,10 @@ export function Canvas({ badgeUrl, isDark, onSectionClick }: CanvasProps) {
   );
 
   return (
-    <main className="flex-1 flex flex-col overflow-hidden">
-      {/* Canvas Toolbar */}
-      <div className="h-10 border-b border-border flex items-center justify-between px-3 shrink-0 bg-muted/30">
-        <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7"
-            onClick={() => setZoom(Math.max(1, zoom - 1))}
-          >
-            <ZoomOut className="h-3.5 w-3.5" />
-          </Button>
-          <span className="text-xs w-12 text-center tabular-nums">
-            {zoom * 100}%
-          </span>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7"
-            onClick={() => setZoom(Math.min(10, zoom + 1))}
-          >
-            <ZoomIn className="h-3.5 w-3.5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7"
-            onClick={() => setZoom(3)}
-          >
-            <RotateCcw className="h-3.5 w-3.5" />
-          </Button>
-        </div>
-        {onSectionClick && (
-          <span className="text-[10px] text-muted-foreground">
-            Click badge to select section
-          </span>
-        )}
-      </div>
-
+    <main className="flex-1 flex flex-col overflow-hidden bg-card border border-border rounded-xl shadow-sm relative">
       {/* Canvas Area */}
       <div
-        className="flex-1 flex items-center justify-center"
+        className="flex-1 flex items-center justify-center rounded-xl overflow-hidden"
         style={canvasStyle}
       >
         <div
@@ -138,6 +100,45 @@ export function Canvas({ badgeUrl, isDark, onSectionClick }: CanvasProps) {
           )}
         </div>
       </div>
+
+      {/* Floating Zoom Controls Island */}
+      <div className="absolute bottom-3 left-3 flex items-center gap-1 bg-card/90 backdrop-blur-sm border border-border rounded-lg shadow-md px-1.5 py-1">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={() => setZoom(Math.max(1, zoom - 1))}
+        >
+          <ZoomOut className="h-3.5 w-3.5" />
+        </Button>
+        <span className="text-xs w-10 text-center tabular-nums">
+          {zoom * 100}%
+        </span>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={() => setZoom(Math.min(10, zoom + 1))}
+        >
+          <ZoomIn className="h-3.5 w-3.5" />
+        </Button>
+        <div className="w-px h-4 bg-border mx-0.5" />
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={() => setZoom(2)}
+        >
+          <RotateCcw className="h-3.5 w-3.5" />
+        </Button>
+      </div>
+
+      {/* Click hint */}
+      {onSectionClick && (
+        <div className="absolute bottom-3 right-3 text-[10px] text-muted-foreground bg-card/90 backdrop-blur-sm border border-border rounded-lg px-2 py-1 shadow-md">
+          Click badge to select section
+        </div>
+      )}
     </main>
   );
 }
