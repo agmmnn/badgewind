@@ -36,10 +36,10 @@ Instead of being limited to predefined themes, you can style every aspect of you
 - Or construct a URL manually:
 
 ```
-https://badgewind.agmmnn.workers.dev/Hello-World?badgeStyle=bg-blue-500,text-white,rounded-0
+https://badgewind.agmmnn.workers.dev/Hello-World?badgeStyle=bg-blue-500,text-white,rounded-md
 ```
 
-![](https://badgewind.agmmnn.workers.dev/Hello-World?badgeStyle=bg-blue-500,text-white,rounded-0) **(That's it. It renders an SVG.)**
+![](https://badgewind.agmmnn.workers.dev/Hello-World?badgeStyle=bg-blue-500,text-white,rounded-md) **(That's it. It renders an SVG.)**
 
 ### Comparison
 
